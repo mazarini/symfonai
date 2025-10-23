@@ -1,0 +1,52 @@
+{
+    "folders": [
+        {
+            "path": "..",
+        },
+    ],
+    "settings": {
+        // ----------------------
+        // PHP / php-cs-fixer
+        // ----------------------
+        "intelephense.environment.includePaths": [
+            "vendor/symfony",
+            "vendor/doctrine",
+            "vendor/twig",
+        ],
+        "intelephense.files.exclude": [
+            "**/.git/**",
+            "**/vendor/**/{Test,test,Tests,tests}/**/*Test.php",
+        ],
+        "intelephense.diagnostics.undefinedMethods": false,
+        "php.suggest.basic": false,
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": true,
+            "strings": true,
+        },
+        "php-cs-fixer.executablePath": "/home/mazarini/.config/composer/vendor/bin/php-cs-fixer",
+        "php-cs-fixer.onsave": true,
+        "php-cs-fixer.rules": "@Symfony",
+        "php-cs-fixer.config": ".php-cs-fixer.php;.php-cs-fixer.dist.php;.php_cs;.php_cs.dist",
+        "[php]": {
+            "editor.defaultFormatter": "junstyle.php-cs-fixer",
+        },
+
+        // ----------------------
+        // Prettier configuration
+        // ----------------------
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "prettier.useEditorConfig": true,
+        "prettier.requireConfig": true,
+        "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[yaml]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[scss]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[twig]": { "editor.defaultFormatter": "esbenp.prettier-vscode" }
+    }
+}

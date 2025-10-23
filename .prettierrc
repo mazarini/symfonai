@@ -1,0 +1,44 @@
+{
+    "printWidth": 100,
+    "tabWidth": 4,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "semi": true,
+    "arrowParens": "always",
+    "plugins": ["prettier-plugin-twig-melody"],
+    "twigPrintWidth": 100,
+    "twigSingleQuote": false,
+    "overrides": [
+        {
+            "files": "*.twig",
+            "options": {
+                "tabWidth": 2
+            }
+        },
+        {
+            "files": "*.yaml",
+            "options": {
+                "tabWidth": 4
+            }
+        },
+        {
+            "files": "*.neon",
+            "options": {
+                "parser": "yaml"
+            }
+        },
+        {
+            "files": "*.md",
+            "options": {
+                "trailingComma": "none",
+                "tabWidth": 2
+            }
+        },
+        {
+            "files": "*.json",
+            "options": {
+                "tabWidth": 4
+            }
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+/vendor
+/var
+/public/build
+*.php
+/package-lock.json
+/node_modules
+/symfony.lock
+/composer.lock

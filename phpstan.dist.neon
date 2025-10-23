@@ -1,0 +1,21 @@
+includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon
+#   - vendor/phpstan/phpstan-doctrine/extension.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    level: 9
+    paths:
+        - src
+        - tests
+
+    # Dossiers/fichiers à ignorer
+    excludePaths:
+        - %currentWorkingDirectory%/var/*
+        - %currentWorkingDirectory%/vendor/*
+        - %currentWorkingDirectory%/public/build/*
+        - %currentWorkingDirectory%/config/secrets/*
+
+    # Options strictes
+    inferPrivatePropertyTypeFromConstructor: true
+    checkExplicitMixed: true
