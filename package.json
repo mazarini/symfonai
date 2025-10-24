@@ -4,13 +4,24 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "dev": "encore dev",
+        "dev-server": "encore dev --watch",
+        "build": "encore production"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "@symfony/webpack-encore": "^5.2.0",
         "prettier": "^2.8.8",
-        "prettier-plugin-twig": "^1.0.1"
+        "prettier-plugin-twig": "^1.0.1",
+        "sass": "^1.93.2",
+        "sass-loader": "^16.0.6",
+        "webpack": "^5.102.1",
+        "webpack-cli": "^6.0.1",
+        "webpack-notifier": "^1.15.0"
+    },
+    "dependencies": {
+        "bootstrap": "^5.3.8"
     }
 }
