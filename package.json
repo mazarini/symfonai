@@ -10,7 +10,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "prettier": "^3.6.2",
-        "prettier-plugin-twig-melody": "^0.4.6"
+        "prettier": "^2.8.8",
+        "prettier-plugin-twig": "^1.0.1"
     }
 }

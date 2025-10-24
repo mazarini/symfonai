@@ -5,7 +5,7 @@
     "trailingComma": "es5",
     "semi": true,
     "arrowParens": "always",
-    "plugins": ["prettier-plugin-twig-melody"],
+    "plugins": ["prettier-plugin-twig"],
     "twigPrintWidth": 100,
     "twigSingleQuote": false,
     "overrides": [
