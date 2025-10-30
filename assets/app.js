@@ -9,4 +9,6 @@
 import './styles/app.scss';
 
 // Import JS de Bootstrap
-import 'bootstrap';
+import * as bootstrap from 'bootstrap';
+
+window.bootstrap = bootstrap;

@@ -12,12 +12,20 @@
     {% block stylesheets %}
       {# CSS global (Bootstrap + app.scss compilé) #}
       {{ encore_entry_link_tags("app") }}
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     {% endblock %}
+
+    <style>
+      body {
+        padding-top: 70px; /* Adjust this value based on your navbar height */
+        padding-bottom: 48px; /* Height of the fixed footer */
+      }
+    </style>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 fixed-top">
       <div class="container">
-        <a class="navbar-brand" href="{{ path("symfonai_chat") }}">SymfonAI</a>
+        <a class="navbar-brand" href="{{ path("mazarini_symfonai_chat") }}">SymfonAI</a>
       </div>
     </nav>
 
@@ -26,6 +34,12 @@
         {# Contenu principal #}
       {% endblock %}
     </div>
+
+    <footer class="footer mt-auto p-0 bg-body fixed-bottom">
+      <div class="container text-center">
+        <span class="text-body small">Copyright (C) {{ "now"|date("Y") }} SymfonAI.</span>
+      </div>
+    </footer>
 
     {% block javascripts %}
       {# JS global (Bootstrap + app.js compilé) #}

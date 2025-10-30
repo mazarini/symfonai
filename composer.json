@@ -17,13 +17,14 @@
         }
     ],
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "symfony/console": "^7.3",
         "symfony/dotenv": "^7.3",
         "symfony/flex": "^2.8",
         "symfony/framework-bundle": "^7.3",
+        "symfony/http-client": "^7.3",
         "symfony/runtime": "^7.3",
         "symfony/twig-bundle": "^7.3",
         "symfony/webpack-encore-bundle": "^2.3",
