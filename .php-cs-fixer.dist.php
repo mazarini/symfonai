@@ -92,7 +92,24 @@ return (new PhpCsFixer\Config())
         // Classes & fonctions
         // --------------------------------------------
         'no_php4_constructor'    => true,
-        'ordered_class_elements' => ['order' => ['use_trait', 'constant_public', 'property_public', 'method_public']],
+        'ordered_class_elements' => [
+            'order' => [
+                'use_trait',
+                'constant_public',
+                'constant_protected',
+                'constant_private',
+                'property_public',
+                'property_protected',
+                'property_private',
+                'construct',
+                'destruct',
+                'magic',
+                'phpunit',
+                'method_public',
+                'method_protected',
+                'method_private',
+            ],
+        ],
         'method_argument_space'  => ['on_multiline' => 'ensure_fully_multiline'],
 
         // --------------------------------------------

@@ -1,0 +1,42 @@
+{% if geminiResponse.usageMetadata %}
+  <div class="mt-4">
+    <h3>
+      Usage Metadata
+    </h3>
+    <p>
+      <span data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Nombre de tokens dans votre question.">
+        Prompt: <span class="badge bg-primary rounded-pill">{{
+            geminiResponse.usageMetadata.promptTokenCount
+          }}</span>
+      </span>
+      |
+      <span data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Nombre de tokens dans la réponse du modèle.">
+        Candidates: <span class="badge bg-primary rounded-pill">{{
+            geminiResponse.usageMetadata.candidatesTokenCount
+          }}</span>
+      </span>
+      |
+      <span data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Nombre de tokens utilisés pour le raisonnement interne du modèle.">
+        Thoughts: <span class="badge bg-primary rounded-pill">{{
+            geminiResponse.usageMetadata.thoughtsTokenCount
+          }}</span>
+      </span>
+      |
+      <span data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Nombre total de tokens facturés pour la requête.">
+        <strong>
+          Total: <span class="badge bg-success rounded-pill">{{
+              geminiResponse.usageMetadata.totalTokenCount
+            }}</span>
+        </strong>
+      </span>
+    </p>
+  </div>
+{% endif %}

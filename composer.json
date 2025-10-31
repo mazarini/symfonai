@@ -20,6 +20,7 @@
         "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "erusev/parsedown-extra": "^0.8.1",
         "symfony/console": "^7.3",
         "symfony/dotenv": "^7.3",
         "symfony/flex": "^2.8",

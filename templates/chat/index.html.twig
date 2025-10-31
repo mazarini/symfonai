@@ -24,110 +24,67 @@
       Chat with Gemini
     </h1>
 
-    {% if question %}
+    {% if geminiRequest.prompt %}
       <div class="mt-5">
         <h2>
           Your question
         </h2>
         <p>
-          {{ question }}
+          {{ geminiRequest.prompt }}
         </p>
       </div>
     {% endif %}
 
-    {% if answer %}
+    {% if geminiResponse %}
       <div class="mt-3">
         <h2>
           Gemini's answer
         </h2>
         <p>
-          {{ answer }}
+          {{ geminiResponse.answer|markdown }}
         </p>
 
-        {% if sentJson and receivedJson %}
-          <div class="mt-4">
-            <button class="btn btn-secondary"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#sentJson"
-              aria-expanded="false"
-              aria-controls="sentJson">
-              Show Sent JSON
-            </button>
-            <button class="btn btn-secondary"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#receivedJson"
-              aria-expanded="false"
-              aria-controls="receivedJson">
-              Show Received JSON
-            </button>
-          </div>
+        <div class="mt-4">
+          <button class="btn btn-secondary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#sentJson"
+            aria-expanded="false"
+            aria-controls="sentJson">
+            Show Sent JSON
+          </button>
+          <button class="btn btn-secondary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#receivedJson"
+            aria-expanded="false"
+            aria-controls="receivedJson">
+            Show Received JSON
+          </button>
+        </div>
 
-          <div class="collapse mt-3" id="sentJson">
-            <div class="card card-body">
-              <h3>
-                Sent JSON
-              </h3>
-              <pre>
-                <code>{{ sentJson }}</code>
-              </pre>
-            </div>
-          </div>
-          <div class="collapse mt-3" id="receivedJson">
-            <div class="card card-body">
-              <h3>
-                Received JSON
-              </h3>
-              <pre>
-                <code>{{ receivedJson }}</code>
-              </pre>
-            </div>
-          </div>
-        {% endif %}
-
-        {% if usageMetadata %}
-          <div class="mt-4">
+        <div class="collapse mt-3" id="sentJson">
+          <div class="card card-body">
             <h3>
-              Usage Metadata
+              Sent JSON
             </h3>
-            <p>
-              <span data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Nombre de tokens dans votre question.">
-                Prompt: <span class="badge bg-primary rounded-pill">{{
-                    usageMetadata.promptTokenCount
-                  }}</span>
-              </span>
-              |
-              <span data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Nombre de tokens dans la réponse du modèle.">
-                Candidates: <span class="badge bg-primary rounded-pill">{{
-                    usageMetadata.candidatesTokenCount
-                  }}</span>
-              </span>
-              |
-              <span data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Nombre de tokens utilisés pour le raisonnement interne du modèle.">
-                Thoughts: <span class="badge bg-primary rounded-pill">{{
-                    usageMetadata.thoughtsTokenCount
-                  }}</span>
-              </span>
-              |
-              <span data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Nombre total de tokens facturés pour la requête.">
-                <strong>
-                  Total: <span class="badge bg-success rounded-pill">{{
-                      usageMetadata.totalTokenCount
-                    }}</span>
-                </strong>
-              </span>
-            </p>
+            <pre>
+              <code>{{ geminiResponse.requestPayload|json_encode(constant('JSON_PRETTY_PRINT')) }}</code>
+            </pre>
           </div>
-        {% endif %}
+        </div>
+        <div class="collapse mt-3" id="receivedJson">
+          <div class="card card-body">
+            <h3>
+              Received JSON
+            </h3>
+            <pre>
+              <code>{{ geminiResponse.rawResponse|json_encode(constant('JSON_PRETTY_PRINT')) }}</code>
+            </pre>
+          </div>
+        </div>
+
+        {% include 'chat/_usage_metadata.html.twig' %}
       </div>
     {% endif %}
   </div>
@@ -142,7 +99,7 @@
               name="systemPrompt"
               rows="2"
               placeholder="System Prompt...">
-              {% if systemPrompt %}{{ systemPrompt }}{% endif %}
+              {{- geminiRequest.systemPrompt -}}
             </textarea>
           </div>
         </div>

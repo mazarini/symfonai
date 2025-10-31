@@ -22,7 +22,11 @@ declare(strict_types=1);
 
 namespace Mazarini\SymfonAI\Service;
 
+use Mazarini\SymfonAI\Request\GeminiRequest;
+use Mazarini\SymfonAI\Response\GeminiResponse;
 use Symfony\Component\HttpClient\Exception\ClientException;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GeminiClient
@@ -35,26 +39,9 @@ class GeminiClient
     ) {
     }
 
-    public function generateContent(string $prompt, string $systemPrompt = ''): array
+    public function generateContent(GeminiRequest $request): GeminiResponse
     {
-        $payload      = [];
-        $systemPrompt = mb_trim($systemPrompt);
-
-        if ($systemPrompt !== '') {
-            $payload['system_instruction'] = [
-                'parts' => [
-                    ['text' => $systemPrompt],
-                ],
-            ];
-        }
-
-        $payload['contents'] = [
-            [
-                'parts' => [
-                    ['text' => mb_trim($prompt)],
-                ],
-            ],
-        ];
+        $payload = $request->getPayload();
 
         try {
             $response = $this->httpClient->request('POST', self::GEMINI_API_ENDPOINT, [
@@ -64,35 +51,65 @@ class GeminiClient
 
             $data = $response->toArray();
 
-            $answer = 'Error: Received an empty or invalid response from the API.';
-            if (!empty($data['candidates'][0]['content']['parts'][0]['text'])) {
-                $answer = $data['candidates'][0]['content']['parts'][0]['text'];
-            }
-
-            return [
-                'answer'   => $answer,
-                'request'  => $payload,
-                'response' => $data,
-            ];
+            return new GeminiResponse($payload, $data);
+        } catch (ClientException $e) {
+            return $this->handleClientException($e, $payload);
+        } catch (TransportExceptionInterface $e) {
+            return $this->handleTransportException($e, $payload);
         } catch (\Throwable $e) {
-            $errorResponse   = ['message' => $e->getMessage()];
-            $responseContent = 'N/A';
-            if ($e instanceof ClientException) {
-                try {
-                    $errorResponse   = $e->getResponse()->toArray(false);
-                    $responseContent = json_encode($errorResponse, \JSON_PRETTY_PRINT);
-                } catch (\Throwable $jsonE) {
-                    $responseContent = $e->getResponse()->getContent(false);
-                }
-            }
+            return $this->handleGenericException($e, $payload);
+        }
+    }
 
-            $answer = 'Error: ' . ($errorResponse['error']['message'] ?? $e->getMessage());
+    private function handleClientException(ClientException $e, array $payload): GeminiResponse
+    {
+        $response   = $e->getResponse();
+        $statusCode = $response->getStatusCode();
+        $rawContent = $response->getContent(false);
 
-            return [
-                'answer'   => $answer,
-                'request'  => $payload,
-                'response' => ['error' => $errorResponse, 'raw_response' => $responseContent, 'exception' => $e->getMessage()],
+        try {
+            $errorData = $response->toArray(false);
+        } catch (DecodingExceptionInterface $decodingException) {
+            $errorData = [
+                'error' => [
+                    'code'    => $statusCode,
+                    'message' => 'Could not decode error response: ' . $decodingException->getMessage(),
+                    'status'  => 'DECODING_FAILED',
+                    'details' => $rawContent,
+                ],
             ];
         }
+        if (!isset($errorData['error']['message'])) {
+            $errorData['error']['message'] = 'An unknown client error occurred.';
+        }
+        $errorData['error']['message'] = \sprintf('[%d] %s', $statusCode, $errorData['error']['message']);
+
+        return new GeminiResponse($payload, $errorData);
+    }
+
+    private function handleTransportException(TransportExceptionInterface $e, array $payload): GeminiResponse
+    {
+        $errorData = [
+            'error' => [
+                'code'    => $e->getCode(),
+                'message' => 'A transport error occurred: ' . $e->getMessage(),
+                'status'  => 'TRANSPORT_ERROR',
+            ],
+        ];
+
+        return new GeminiResponse($payload, $errorData);
+    }
+
+    private function handleGenericException(\Throwable $e, array $payload): GeminiResponse
+    {
+        $errorData = [
+            'error' => [
+                'code'    => $e->getCode(),
+                'message' => 'An unexpected error occurred: ' . $e->getMessage(),
+                'status'  => 'UNEXPECTED_ERROR',
+            ],
+        ];
+
+        return new GeminiResponse($payload, $errorData);
     }
 }

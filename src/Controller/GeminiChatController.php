@@ -22,46 +22,44 @@ declare(strict_types=1);
 
 namespace Mazarini\SymfonAI\Controller;
 
+use Mazarini\SymfonAI\Request\GeminiRequest;
+use Mazarini\SymfonAI\Response\GeminiResponse;
 use Mazarini\SymfonAI\Service\GeminiClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ChatController extends AbstractController
+class GeminiChatController extends AbstractController
 {
     public function __construct(
         private readonly GeminiClient $geminiClient,
     ) {
     }
 
-    #[Route('/chat', name: 'mazarini_symfonai_chat')]
+    #[Route('/chat', name: 'mazarini_symfonai_gemini_chat')]
     public function index(Request $request): Response
     {
-        $question      = null;
-        $answer        = null;
-        $sentJson      = null;
-        $receivedJson  = null;
-        $usageMetadata = null;
-        $systemPrompt  = null;
+        $geminiRequest  = new GeminiRequest();
+        $geminiResponse = null;
 
         if ($request->isMethod('POST')) {
-            $question      = (string) $request->request->get('question', '');
-            $systemPrompt  = (string) $request->request->get('systemPrompt', '');
-            $result        = $this->geminiClient->generateContent($question, $systemPrompt);
-            $answer        = $result['answer'];
-            $sentJson      = json_encode($result['request'], \JSON_PRETTY_PRINT);
-            $receivedJson  = json_encode($result['response'], \JSON_PRETTY_PRINT);
-            $usageMetadata = $result['response']['usageMetadata'] ?? null;
+            $question     = (string) $request->request->get('question', '');
+            $systemPrompt = (string) $request->request->get('systemPrompt', '');
+
+            if ('' !== $question) {
+                $geminiRequest->setPrompt($question);
+                if ('' !== $systemPrompt) {
+                    $geminiRequest->setSystemPrompt($systemPrompt);
+                }
+
+                $geminiResponse = $this->geminiClient->generateContent($geminiRequest);
+            }
         }
 
         return $this->render('chat/index.html.twig', [
-            'question'      => $question,
-            'answer'        => $answer,
-            'sentJson'      => $sentJson,
-            'receivedJson'  => $receivedJson,
-            'usageMetadata' => $usageMetadata,
-            'systemPrompt'  => $systemPrompt,
+            'geminiRequest'  => $geminiRequest,
+            'geminiResponse' => $geminiResponse,
         ]);
     }
 }
