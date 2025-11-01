@@ -1,0 +1,135 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+  Chat with OpenAI-compatible API
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    body { padding-bottom: 130px; /* Adjust this value based on your bottom navbar height + footer
+    height */ } .bottom-navbar { position: fixed; bottom: 20px; /* Height of the footer */ left: 0;
+    width: 100%; min-height: 100px; /* Minimum height for the bottom navbar */ display: flex; /* Use
+    flexbox to align content */ align-items: center; /* Center content vertically */ z-index: 1030;
+    /* Ensure it's above other content, below top navbar */ } .bottom-navbar .container { width:
+    100%; /* Ensure container takes full width */ } .bottom-navbar .input-group { align-items:
+    center; /* Align input group items vertically */ } .bottom-navbar textarea { resize: vertical;
+    /* Allow vertical resizing */ min-height: 38px; /* Default height for one row */ max-height:
+    150px; /* Max height to prevent it from taking too much space */ }
+  </style>
+{% endblock %}
+{% block body %}
+  <div class="container">
+    <h1>
+      Chat with OpenAI-compatible API (Llama.cpp)
+    </h1>
+
+    {% if openaiRequest.prompt %}
+      <div class="mt-5">
+        <h2>
+          Your question
+        </h2>
+        <p>
+          {{ openaiRequest.prompt }}
+        </p>
+      </div>
+    {% endif %}
+
+    {% if openaiResponse %}
+      <div class="mt-3">
+        <h2>
+          AI's answer
+        </h2>
+        <p>
+          {{ openaiResponse.answer|markdown }}
+        </p>
+
+        <div class="mt-4">
+          <button class="btn btn-secondary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#sentJson"
+            aria-expanded="false"
+            aria-controls="sentJson">
+            Show Sent JSON
+          </button>
+          <button class="btn btn-secondary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#receivedJson"
+            aria-expanded="false"
+            aria-controls="receivedJson">
+            Show Received JSON
+          </button>
+        </div>
+
+        <div class="collapse mt-3" id="sentJson">
+          <div class="card card-body">
+            <h3>
+              Sent JSON
+            </h3>
+            <pre>
+              <code>{{ openaiResponse.requestPayload|json_encode(constant('JSON_PRETTY_PRINT')) }}</code>
+            </pre>
+          </div>
+        </div>
+        <div class="collapse mt-3" id="receivedJson">
+          <div class="card card-body">
+            <h3>
+              Received JSON
+            </h3>
+            <pre>
+              <code>{{ openaiResponse.rawResponse|json_encode(constant('JSON_PRETTY_PRINT')) }}</code>
+            </pre>
+          </div>
+        </div>
+
+        {% include 'openai_chat/_usage_metadata.html.twig' %}
+      </div>
+    {% endif %}
+  </div>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mt-4 bottom-navbar">
+    <div class="container flex-column">
+      <form class="d-flex w-100" method="POST">
+        <div class="collapse w-100" id="systemPromptCollapse">
+          <div class="input-group mb-2">
+            <textarea class="form-control"
+              id="systemPrompt"
+              name="systemPrompt"
+              rows="2"
+              placeholder="System Prompt...">
+              {{- openaiRequest.systemPrompt -}}
+            </textarea>
+          </div>
+        </div>
+        <div class="input-group">
+          <button class="btn btn-outline-secondary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#systemPromptCollapse"
+            aria-bs-expanded="false"
+            aria-controls="systemPromptCollapse">
+            <i class="bi bi-gear"></i>
+          </button>
+          <textarea class="form-control"
+            id="question"
+            name="question"
+            rows="1"
+            placeholder="Ask the AI..."></textarea>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+      </form>
+    </div>
+  </nav>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () { var tooltipTriggerList =
+    [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')) var tooltipList =
+    tooltipTriggerList.map(function (tooltipTriggerEl) { return new
+    bootstrap.Tooltip(tooltipTriggerEl) }) });
+  </script>
+{% endblock %}

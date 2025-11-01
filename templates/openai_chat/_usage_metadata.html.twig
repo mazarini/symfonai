@@ -1,0 +1,34 @@
+{% if openaiResponse.usageMetadata %}
+  <div class="mt-4">
+    <h3>
+      Usage Metadata
+    </h3>
+    <p>
+      <span data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Nombre de tokens dans votre question.">
+        Prompt: <span class="badge bg-primary rounded-pill">{{
+            openaiResponse.usageMetadata.prompt_tokens
+          }}</span>
+      </span>
+      |
+      <span data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Nombre de tokens dans la réponse du modèle.">
+        Completion: <span class="badge bg-primary rounded-pill">{{
+            openaiResponse.usageMetadata.completion_tokens
+          }}</span>
+      </span>
+      |
+      <span data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Nombre total de tokens facturés pour la requête.">
+        <strong>
+          Total: <span class="badge bg-success rounded-pill">{{
+              openaiResponse.usageMetadata.total_tokens
+            }}</span>
+        </strong>
+      </span>
+    </p>
+  </div>
+{% endif %}
