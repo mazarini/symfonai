@@ -16,7 +16,7 @@
         data-bs-placement="top"
         title="Nombre de tokens dans la réponse du modèle.">
         Candidates: <span class="badge bg-primary rounded-pill">{{
-            geminiResponse.usageMetadata.candidatesTokenCount
+            (geminiResponse.usageMetadata.totalTokenCount - geminiResponse.usageMetadata.promptTokenCount)
           }}</span>
       </span>
       |

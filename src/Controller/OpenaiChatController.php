@@ -34,7 +34,6 @@ class OpenaiChatController extends AbstractController
     public function __construct(
         private readonly OpenaiClient $openaiClient,
         private readonly string $modelName,
-        private readonly ?int $maxTokens = null,
     ) {
     }
 
@@ -55,12 +54,15 @@ class OpenaiChatController extends AbstractController
                 }
 
                 $config = $openaiRequest->getConfig();
-                if (null !== $this->maxTokens) {
-                    // Example of setting a value from the form, assuming you add a 'max_tokens' field to your form
-                    // $maxTokens = $request->request->getInt('max_tokens');
-                    // if ($maxTokens > 0) {
-                    $config->setMaxTokens($this->maxTokens);
 
+                $temperature = $request->request->get('temperature');
+                if (is_numeric($temperature)) {
+                    $config->setTemperature((float) $temperature);
+                }
+
+                $maxTokens = $request->request->get('maxTokens');
+                if (is_numeric($maxTokens)) {
+                    $config->setMaxTokens((int) $maxTokens);
                 }
 
                 $openaiResponse = $this->openaiClient->generateContent($openaiRequest);

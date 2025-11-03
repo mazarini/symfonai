@@ -22,7 +22,6 @@ services:
     Mazarini\SymfonAI\Controller\OpenaiChatController:
         arguments:
             $modelName: '%env(OPENAI_COMPATIBLE_MODEL)%'
-            $maxTokens: '%env(int:OPENAI_COMPATIBLE_MAX_TOKENS)%'
 
     Mazarini\SymfonAI\Service\GeminiClient:
         arguments:

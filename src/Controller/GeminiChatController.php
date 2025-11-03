@@ -53,6 +53,18 @@ class GeminiChatController extends AbstractController
                     $geminiRequest->setSystemPrompt($systemPrompt);
                 }
 
+                $config = $geminiRequest->getConfig();
+
+                $temperature = $request->request->get('temperature');
+                if (is_numeric($temperature)) {
+                    $config->setTemperature((float) $temperature);
+                }
+
+                $maxTokens = $request->request->get('maxTokens');
+                if (is_numeric($maxTokens)) {
+                    $config->setMaxTokens((int) $maxTokens);
+                }
+
                 $geminiResponse = $this->geminiClient->generateContent($geminiRequest);
             }
         }

@@ -103,6 +103,12 @@
             </textarea>
           </div>
         </div>
+        <div class="collapse w-100" id="advancedConfigCollapse">
+          <div class="card card-body mb-2">
+            <h5 class="card-title">Advanced Options</h5>
+            {% include 'chat/_config_form.html.twig' with {'request': openaiRequest, 'max_temperature': 2.0} %}
+          </div>
+        </div>
         <div class="input-group">
           <button class="btn btn-outline-secondary"
             type="button"
@@ -111,6 +117,14 @@
             aria-bs-expanded="false"
             aria-controls="systemPromptCollapse">
             <i class="bi bi-gear"></i>
+          </button>
+          <button class="btn btn-outline-secondary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#advancedConfigCollapse"
+            aria-bs-expanded="false"
+            aria-controls="advancedConfigCollapse">
+            <i class="bi bi-sliders"></i>
           </button>
           <textarea class="form-control"
             id="question"

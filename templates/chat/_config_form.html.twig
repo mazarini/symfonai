@@ -1,0 +1,11 @@
+{# sources/templates/chat/_config_form.html.twig #}
+
+<div class="input-group mb-2">
+    <span class="input-group-text">Temperature</span>
+    <input type="number" step="0.01" min="0.0" max="{{ max_temperature|default(2.0) }}" class="form-control" id="temperature" name="temperature" value="{{ request.config.temperature }}">
+</div>
+<div class="input-group mb-2">
+    <span class="input-group-text">Max Tokens</span>
+    <input type="number" step="1" min="1" class="form-control" id="maxTokens" name="maxTokens" value="{{ request.config.maxTokens }}">
+</div>
+{# Add more config fields here as needed #}

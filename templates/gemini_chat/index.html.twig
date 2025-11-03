@@ -84,14 +84,14 @@
           </div>
         </div>
 
-        {% include 'chat/_usage_metadata.html.twig' %}
+        {% include 'gemini_chat/_usage_metadata.html.twig' %}
       </div>
     {% endif %}
   </div>
 
   <nav class="navbar navbar-expand-lg navbar-light bg-light mt-4 bottom-navbar">
     <div class="container flex-column">
-      <form class="d-flex w-100" method="POST">
+      <form class="w-100" method="POST">
         <div class="collapse w-100" id="systemPromptCollapse">
           <div class="input-group mb-2">
             <textarea class="form-control"
@@ -103,15 +103,35 @@
             </textarea>
           </div>
         </div>
+        <div class="collapse w-100" id="advancedConfigCollapse">
+          <div class="card card-body mb-2">
+            <h5 class="card-title">Advanced Options</h5>
+            {% include 'chat/_config_form.html.twig' with {'request': geminiRequest, 'max_temperature': 1.0} %}
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mb-2">
+            <button class="btn btn-outline-secondary"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#systemPromptCollapse"
+                aria-bs-expanded="false"
+                aria-controls="systemPromptCollapse"
+                title="System Prompt">
+                <i class="bi bi-gear"></i>
+            </button>
+            <button class="btn btn-outline-secondary"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#advancedConfigCollapse"
+                aria-bs-expanded="false"
+                aria-controls="advancedConfigCollapse"
+                title="Advanced Options">
+                <i class="bi bi-sliders"></i>
+            </button>
+        </div>
+
         <div class="input-group">
-          <button class="btn btn-outline-secondary"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#systemPromptCollapse"
-            aria-bs-expanded="false"
-            aria-controls="systemPromptCollapse">
-            <i class="bi bi-gear"></i>
-          </button>
           <textarea class="form-control"
             id="question"
             name="question"
