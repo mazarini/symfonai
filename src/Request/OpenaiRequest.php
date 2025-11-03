@@ -22,25 +22,19 @@ declare(strict_types=1);
 
 namespace Mazarini\SymfonAI\Request;
 
-class OpenaiRequest
+use Mazarini\SymfonAI\Model\Generation\AbstractConfig;
+use Mazarini\SymfonAI\Model\Generation\OpenaiConfig;
+
+class OpenaiRequest implements AiRequestInterface
 {
-    private string $model;
     private ?array $systemPrompt = null;
     private array $history       = [];
     private ?array $prompt       = null;
-    private array $options       = [];
+    private ?OpenaiConfig $config;
 
-    public function __construct(string $model = 'gpt-4', float $temperature = 0.7)
+    public function __construct(string $defaultModel = 'gpt-4')
     {
-        $this->model                     = $model;
-        $this->options['temperature'] = $temperature;
-    }
-
-    public function setModel(string $model): self
-    {
-        $this->model = $model;
-
-        return $this;
+        $this->config = new OpenaiConfig(model: $defaultModel);
     }
 
     public function setSystemPrompt(string $text): self
@@ -70,26 +64,6 @@ class OpenaiRequest
         return $this;
     }
 
-    public function setTemperature(float $value): self
-    {
-        if ($value < 0.0 || $value > 2.0) {
-            throw new \InvalidArgumentException('Temperature must be between 0.0 and 2.0.');
-        }
-        $this->options['temperature'] = $value;
-
-        return $this;
-    }
-
-    public function setMaxTokens(int $value): self
-    {
-        if ($value <= 0) {
-            throw new \InvalidArgumentException('Max tokens must be a positive integer.');
-        }
-        $this->options['max_tokens'] = $value;
-
-        return $this;
-    }
-
     public function getSystemPrompt(): ?string
     {
         return $this->systemPrompt['content'] ?? null;
@@ -113,12 +87,29 @@ class OpenaiRequest
         $messages = array_merge($messages, $this->history);
         $messages[] = $this->prompt;
 
-        return array_merge(
-            [
-                'model'    => $this->model,
-                'messages' => $messages,
-            ],
-            $this->options
-        );
+        $payload = [
+            'messages' => $messages,
+        ];
+
+        if (null !== $this->config) {
+            $payload = array_merge($payload, $this->config->toArray());
+        }
+
+        return $payload;
+    }
+
+    public function getConfig(): ?AbstractConfig
+    {
+        return $this->config;
+    }
+
+    public function setConfig(AbstractConfig $config): self
+    {
+        if (!$config instanceof OpenaiConfig) {
+            throw new \InvalidArgumentException('Configuration must be an instance of OpenaiConfig.');
+        }
+        $this->config = $config;
+
+        return $this;
     }
 }

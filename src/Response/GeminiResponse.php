@@ -22,7 +22,9 @@ declare(strict_types=1);
 
 namespace Mazarini\SymfonAI\Response;
 
-class GeminiResponse
+use Mazarini\SymfonAI\Response\AiResponseInterface;
+
+class GeminiResponse implements AiResponseInterface
 {
     private array $requestPayload;
     private array $rawResponse;

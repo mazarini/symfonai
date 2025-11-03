@@ -22,7 +22,9 @@ declare(strict_types=1);
 
 namespace Mazarini\SymfonAI\Response;
 
-class OpenaiResponse
+use Mazarini\SymfonAI\Response\AiResponseInterface;
+
+class OpenaiResponse implements AiResponseInterface
 {
     private array $requestPayload;
     private array $rawResponse;

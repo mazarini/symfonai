@@ -22,18 +22,21 @@ declare(strict_types=1);
 
 namespace Mazarini\SymfonAI\Request;
 
-class GeminiRequest
+use Mazarini\SymfonAI\Model\Generation\AbstractConfig;
+use Mazarini\SymfonAI\Model\Generation\GeminiConfig;
+
+class GeminiRequest implements AiRequestInterface
 {
     private ?array $systemInstruction = null;
     private array $history            = [];
     private ?array $prompt            = null;
-    private array $generationConfig   = [];
+    private ?GeminiConfig $config;
     private ?array $safetySettings    = null;
     private ?array $tools             = null;
 
     public function __construct()
     {
-        $this->generationConfig = ['temperature' => 0.5];
+        $this->config = new GeminiConfig();
     }
 
     public function setPrompt(string $text): self
@@ -68,28 +71,6 @@ class GeminiRequest
         return $this;
     }
 
-    public function setTemperature(float $value): self
-    {
-        if ($value < 0.0 || $value > 2.0) {
-            throw new \InvalidArgumentException('Temperature must be between 0.0 and 2.0.');
-        }
-
-        $this->generationConfig['temperature'] = $value;
-
-        return $this;
-    }
-
-    public function setMaxOutputTokens(int $value): self
-    {
-        if ($value <= 0) {
-            throw new \InvalidArgumentException('Max output tokens must be a positive integer.');
-        }
-
-        $this->generationConfig['maxOutputTokens'] = $value;
-
-        return $this;
-    }
-
     public function getPrompt(): ?string
     {
         return $this->prompt['parts'][0]['text'] ?? null;
@@ -119,8 +100,10 @@ class GeminiRequest
         $payload['contents'][] = $this->prompt;
 
         // Add other optional configurations.
-        if (null !== $this->generationConfig) {
-            $payload['generation_config'] = $this->generationConfig;
+        if (null !== $this->config) {
+            // toArray() returns ['generationConfig' => [...]].
+            // We merge this into the payload.
+            $payload = array_merge($payload, $this->config->toArray());
         }
         if (null !== $this->safetySettings) {
             $payload['safety_settings'] = $this->safetySettings;
@@ -130,5 +113,20 @@ class GeminiRequest
         }
 
         return $payload;
+    }
+
+    public function getConfig(): ?AbstractConfig
+    {
+        return $this->config;
+    }
+
+    public function setConfig(AbstractConfig $config): self
+    {
+        if (!$config instanceof GeminiConfig) {
+            throw new \InvalidArgumentException('Configuration must be an instance of GeminiConfig.');
+        }
+        $this->config = $config;
+
+        return $this;
     }
 }

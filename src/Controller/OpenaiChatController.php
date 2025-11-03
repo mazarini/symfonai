@@ -38,7 +38,7 @@ class OpenaiChatController extends AbstractController
     ) {
     }
 
-    #[Route('/openai-chat', name: 'mazarini_symfonai_openai_chat')]
+    #[Route('/chat/openai', name: 'mazarini_symfonai_openai_chat')]
     public function index(Request $request): Response
     {
         $openaiRequest  = new OpenaiRequest($this->modelName);
@@ -54,8 +54,13 @@ class OpenaiChatController extends AbstractController
                     $openaiRequest->setSystemPrompt($systemPrompt);
                 }
 
+                $config = $openaiRequest->getConfig();
                 if (null !== $this->maxTokens) {
-                    $openaiRequest->setMaxTokens($this->maxTokens);
+                    // Example of setting a value from the form, assuming you add a 'max_tokens' field to your form
+                    // $maxTokens = $request->request->getInt('max_tokens');
+                    // if ($maxTokens > 0) {
+                    $config->setMaxTokens($this->maxTokens);
+
                 }
 
                 $openaiResponse = $this->openaiClient->generateContent($openaiRequest);

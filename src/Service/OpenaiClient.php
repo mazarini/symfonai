@@ -22,95 +22,53 @@ declare(strict_types=1);
 
 namespace Mazarini\SymfonAI\Service;
 
+use Mazarini\SymfonAI\Request\AiRequestInterface;
 use Mazarini\SymfonAI\Request\OpenaiRequest;
+use Mazarini\SymfonAI\Response\AiResponseInterface;
 use Mazarini\SymfonAI\Response\OpenaiResponse;
-use Symfony\Component\HttpClient\Exception\ClientException;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class OpenaiClient
+class OpenaiClient extends AbstractAiClient
 {
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
+        HttpClientInterface $httpClient,
         private readonly string $endpoint,
         private readonly ?string $apiKey = null,
     ) {
+        parent::__construct($httpClient);
     }
 
-    public function generateContent(OpenaiRequest $request): OpenaiResponse
+    public function generateContent(AiRequestInterface $request): AiResponseInterface
     {
-        $payload = $request->getPayload();
+        if (!$request instanceof OpenaiRequest) {
+            throw new \InvalidArgumentException('OpenaiClient requires a OpenaiRequest instance.');
+        }
 
+        return parent::generateContent($request);
+    }
+
+    protected function getMethod(): string
+    {
+        return 'POST';
+    }
+
+    protected function getEndpoint(): string
+    {
+        return $this->endpoint;
+    }
+
+    protected function getOptions(array $payload): array
+    {
         $options = ['json' => $payload];
-        if (!empty($this->apiKey)) {
+        if (isset($this->apiKey) && '' !== $this->apiKey) {
             $options['auth_bearer'] = $this->apiKey;
         }
 
-        try {
-            $response = $this->httpClient->request('POST', $this->endpoint, $options);
-
-            $data = $response->toArray();
-
-            return new OpenaiResponse($payload, $data);
-        } catch (ClientException $e) {
-            return $this->handleClientException($e, $payload);
-        } catch (TransportExceptionInterface $e) {
-            return $this->handleTransportException($e, $payload);
-        } catch (\Throwable $e) {
-            return $this->handleGenericException($e, $payload);
-        }
+        return $options;
     }
 
-    private function handleClientException(ClientException $e, array $payload): OpenaiResponse
+    protected function createResponse(array $payload, array $data): AiResponseInterface
     {
-        $response   = $e->getResponse();
-        $statusCode = $response->getStatusCode();
-        $rawContent = $response->getContent(false);
-
-        try {
-            $errorData = $response->toArray(false);
-        } catch (DecodingExceptionInterface $decodingException) {
-            $errorData = [
-                'error' => [
-                    'code'    => $statusCode,
-                    'message' => 'Could not decode error response: ' . $decodingException->getMessage(),
-                    'status'  => 'DECODING_FAILED',
-                    'details' => $rawContent,
-                ],
-            ];
-        }
-        if (!isset($errorData['error']['message'])) {
-            $errorData['error']['message'] = 'An unknown client error occurred.';
-        }
-        $errorData['error']['message'] = sprintf('[%d] %s', $statusCode, $errorData['error']['message']);
-
-        return new OpenaiResponse($payload, $errorData);
-    }
-
-    private function handleTransportException(TransportExceptionInterface $e, array $payload): OpenaiResponse
-    {
-        $errorData = [
-            'error' => [
-                'code'    => $e->getCode(),
-                'message' => 'A transport error occurred: ' . $e->getMessage(),
-                'status'  => 'TRANSPORT_ERROR',
-            ],
-        ];
-
-        return new OpenaiResponse($payload, $errorData);
-    }
-
-    private function handleGenericException(\Throwable $e, array $payload): OpenaiResponse
-    {
-        $errorData = [
-            'error' => [
-                'code'    => $e->getCode(),
-                'message' => 'An unexpected error occurred: ' . $e->getMessage(),
-                'status'  => 'UNEXPECTED_ERROR',
-            ],
-        ];
-
-        return new OpenaiResponse($payload, $errorData);
+        return new OpenaiResponse($payload, $data);
     }
 }

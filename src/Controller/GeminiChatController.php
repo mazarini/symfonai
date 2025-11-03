@@ -37,7 +37,7 @@ class GeminiChatController extends AbstractController
     ) {
     }
 
-    #[Route('/chat', name: 'mazarini_symfonai_gemini_chat')]
+    #[Route('/chat/gemini', name: 'mazarini_symfonai_gemini_chat')]
     public function index(Request $request): Response
     {
         $geminiRequest  = new GeminiRequest();
@@ -57,7 +57,7 @@ class GeminiChatController extends AbstractController
             }
         }
 
-        return $this->render('chat/index.html.twig', [
+        return $this->render('gemini_chat/index.html.twig', [
             'geminiRequest'  => $geminiRequest,
             'geminiResponse' => $geminiResponse,
         ]);
