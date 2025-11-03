@@ -4,37 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-      {% block title %}
+      {%- block title -%}
         SymfonAI
-      {% endblock %}
+      {%- endblock -%}
     </title>
 
+    {# CSS global (Bootstrap + app.scss compilé) #}
+    {{ encore_entry_link_tags("app") }}
     {% block stylesheets %}
-      {# CSS global (Bootstrap + app.scss compilé) #}
-      {{ encore_entry_link_tags("app") }}
-      <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    {% endblock %}
 
-    <style>
-      body { padding-top: 70px; /* Adjust this value based on your navbar height */ padding-bottom:
-      48px; /* Height of the fixed footer */ }
-    </style>
+    {% endblock %}
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 fixed-top">
       <div class="container">
         <a class="navbar-brand" href="/">SymfonAI</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="{{ path('mazarini_symfonai_gemini_chat') }}">Gemini Chat</a>
+              <a class="nav-link" href="{{ path("mazarini_symfonai_gemini_chat") }}">Gemini Chat</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ path('mazarini_symfonai_openai_chat') }}">OpenAI Chat</a>
+              <a class="nav-link" href="{{ path("mazarini_symfonai_openai_chat") }}">OpenAI Chat</a>
             </li>
           </ul>
         </div>
@@ -53,9 +53,10 @@
       </div>
     </footer>
 
+    {# JS global (Bootstrap + app.js compilé) #}
+    {{ encore_entry_script_tags("app") }}
     {% block javascripts %}
-      {# JS global (Bootstrap + app.js compilé) #}
-      {{ encore_entry_script_tags("app") }}
+
     {% endblock %}
   </body>
 </html>
